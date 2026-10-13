@@ -1,5 +1,12 @@
 *Sprint 1*
 
+
+imports used
+- import java.awt.*;
+import javax.swing.event.*;
+import javax.swing.*;
+
+
 Register Page deliverables
 
 
@@ -7,3 +14,6 @@ save inputs for following requested inputs
 -username
 -password
 -email
+
+
+color scheme - black and white, black input request, red error output
