@@ -1,0 +1,8 @@
+Need to do:
+  -Window that shows all elements
+    -Email textfield
+    -Password textfield
+    -button to login
+    -compare text in email and password boxes to database
+      -if a match, go to main app
+      -if no match, display an error
