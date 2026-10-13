@@ -1,3 +1,12 @@
+Imports used:
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+
+Have done:
+  -
+
 Need to do:
   -Window that shows all elements
     -Email textfield
