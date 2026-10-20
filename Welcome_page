@@ -1,0 +1,28 @@
+//Welcome Page progress so far. I have the frame and window's title set up to appear. I will continue to add the register button, 
+login button, description Jlabel, and app title Jlabel!
+
+
+
+
+
+
+import java.awt.*;
+import javax.swing.*;
+
+
+    public class welcome_page {
+        JFrame window_border; //Introduce the frame
+        public welcome_page() { //Constructor for the frame
+        window_border = new JFrame("NextUp - Welcome Page"); //Frame Title
+        window_border.setSize(400,500); //Frame size
+        window_border.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Frame exit function
+        window_border.setLocationRelativeTo(null); //Frame position centered in screen
+        window_border.setVisible(true); //Set frame visibility to true
+
+        }
+
+        public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new welcome_page()); //Invoke every characteristic for the frame at once
+
+        }
+    }
