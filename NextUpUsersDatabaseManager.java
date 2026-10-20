@@ -4,7 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import org.mindrot.jbcrypt.BCrypt;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class NextUpUsersDatabaseManager {
     // Defines the local database file name
@@ -37,7 +37,7 @@ public class NextUpUsersDatabaseManager {
              PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
              
             // Scramble the password securely before saving it to the database
-            String hashedPassword = BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+            String hashedPassword = BCrypt.withDefaults().hashToString(12, plainTextPassword.toCharArray());
             
             pstmt.setString(1, email);
             pstmt.setString(2, username);
@@ -65,7 +65,8 @@ public class NextUpUsersDatabaseManager {
             if (rs.next()) {
                 String storedHashedPassword = rs.getString("Password");
                 // Compare the plain text attempt against the stored hash
-                return BCrypt.checkpw(plainTextPassword, storedHashedPassword);
+                BCrypt.Result result = BCrypt.verifyer().verify(plainTextPassword.toCharArray(), storedHashedPassword);
+                return result.verified;
             }
             return false; // Email not found
             
