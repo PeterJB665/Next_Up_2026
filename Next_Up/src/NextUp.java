@@ -5,6 +5,7 @@ import java.awt.event.*;
 public class NextUp {
     JFrame window_border; //Introduce the frame
     public NextUp() { //Constructor for the frame
+        //MAIN WAS ADDED BY LAILA
         window_border = new JFrame("NextUp - Welcome Page"); //Frame Title
         window_border.setSize(800,750); //Frame size
         window_border.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Frame exit function
@@ -30,6 +31,7 @@ public class NextUp {
 
         login_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                //LOGIN PAGE CREATED BY PETER
                 SwingUtilities.invokeLater(() -> {
                     //create a frame login
                     JFrame login = new JFrame("Next Up - Login");
@@ -136,6 +138,7 @@ public class NextUp {
 
         register_button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                //REGISTER PAGE ADDED BY SEAN
                 SwingUtilities.invokeLater(() -> {
                     //create a frame register
                     JFrame register = new JFrame("Register here for more information");
@@ -287,7 +290,8 @@ public class NextUp {
         }
 
         public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new NextUp()); //Invoke every characteristic for the frame at once
+            //MADE BY LAILA
+            SwingUtilities.invokeLater(() -> new NextUp()); //Invoke every characteristic for the frame at once
 
 
         }
