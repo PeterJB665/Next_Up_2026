@@ -29,7 +29,7 @@ public class NextUpUsersDatabaseManager {
         }
     }
 
-    // Connects to NextUp_Register_Page.java
+    // Collects the account information from NextUp_Register_Page.java and stores it in the user database
     public static boolean registerUser(String email, String username, String plainTextPassword) {
         String insertSQL = "INSERT INTO Users(EmailAddress, Username, Password) VALUES(?,?,?)";
         
