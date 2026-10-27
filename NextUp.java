@@ -113,12 +113,26 @@ public class NextUp {
 
                     //action listener to see when the button is pressed
                     login_button.addActionListener(new ActionListener() {
-                        @Override
                         public void actionPerformed(ActionEvent e) {
-                            //here, we swap to the main app
-                            //login.setVisible(false);
-                            //next_up.setVisible(true);
+                            String currentEmail = email.getText();
+                            String currentPassword = password.getText();
+                            
+                            // Prevent attempting to log in with the default placeholder text
+                            if (currentEmail.equals("Enter your Email Address...") || currentPassword.equals("Enter your password...")) {
+                                JOptionPane.showMessageDialog(login, "Please enter your email and password.");
+                                return;
+                            }
 
+                            // Call the database manager to verify the credentials
+                            boolean isAuthenticated = NextUpUsersDatabaseManager.authenticateUser(currentEmail, currentPassword);
+                            
+                            if (isAuthenticated) {
+                                JOptionPane.showMessageDialog(login, "Login successful!");
+                                // login.setVisible(false);
+                                // next_up.setVisible(true); // Uncomment this line once your main app frame is built and defined
+                            } else {
+                                JOptionPane.showMessageDialog(login, "Invalid email or password. Please try again.");
+                            }
                         }
                     });
 
