@@ -2,9 +2,9 @@ import java.awt.*;
 import javax.swing.*;
 
 
-    public class welcome_page {
+    public class NextUp_Welcome_Page {
         JFrame window_border; //Introduce the frame
-        public welcome_page() { //Constructor for the frame
+        public NextUp_Welcome_Page() { //Constructor for the frame
         window_border = new JFrame("NextUp - Welcome Page"); //Frame Title
         window_border.setSize(400,500); //Frame size
         window_border.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Frame exit function
@@ -28,18 +28,11 @@ import javax.swing.*;
         register_button.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(register_button);
 
-
-
-
-
-
-
-
         window_border.setVisible(true); //Set whole window page visibility to true
         }
 
         public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new welcome_page()); //Invoke every characteristic for the frame at once
+        SwingUtilities.invokeLater(() -> new NextUp_Welcome_Page()); //Invoke every characteristic for the frame at once
 
         }
     }

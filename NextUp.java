@@ -102,11 +102,6 @@ public class NextUp {
                         }
                     });
                     //create a label that welcomes the user
-                    JLabel welcome_login = new JLabel("Welcome to Next Up! Please log in.");
-                    welcome_login.setForeground(Color.BLUE);
-                    welcome_login.setFont(new Font("Tahoma", Font.BOLD, 18));
-
-                    //create a button to login, it doesn't do anything yet, but it will
                     JButton login_button = new JButton("See what's up!");
                     login_button.setForeground(Color.BLUE);
                     login_button.setFont(new Font("Tahoma", Font.BOLD, 18));
@@ -136,6 +131,10 @@ public class NextUp {
                         }
                     });
 
+                    JLabel welcome_login = new JLabel("Welcome to Next Up! Please log in.");
+                    welcome_login.setForeground(Color.BLUE);
+                    welcome_login.setFont(new Font("Tahoma", Font.BOLD, 18));
+                    
                     //add everything to login
                     login.add(welcome_login,gbc);
                     login.add(email,gbc);
