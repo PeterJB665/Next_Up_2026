@@ -11,4 +11,9 @@ create src folder and DatabaseManager.java
 
 20261020, updated both sqlite and Bcrypt with modern, working libraries
 Sqlite - https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.53.4.0/
-Bcrypt - https://central.sonatype.com/artifact/at.favre.lib/bcrypt
+Bcrypt - https://central.sonatype.com/artifact/at.favre.lib/
+
+Bcrypt support library Bytes 1.6.1 added 20261027, nextup2026users.db now updating when registering 
+    a new account.
+
+User registration window not closing following user registration as of 20261027 14:20
