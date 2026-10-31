@@ -1,0 +1,63 @@
+import java.awt.*;
+import javax.swing.*;
+
+
+public class profile_page {    JFrame profile_border;
+    //Set up frame
+    public profile_page() {
+        profile_border = new JFrame("NextUp - Homepage");
+        profile_border.setSize(400,500);
+        profile_border.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        profile_border.setLocationRelativeTo(null);
+        //profile_border.setVisible(true); //Set frame visibility to true
+
+        //Set up JPanel for buttons and textboxes
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        profile_border.add(panel);
+
+        //Set up homepage textbox
+        JLabel homepage_message_textbox = new JLabel("<html><p> Welcome to your homepage - Select a category to view its corresponding products! <p><html>"); //HTML condenses lines to fit the window
+        panel.add(homepage_message_textbox);
+        homepage_message_textbox.setForeground(Color.BLUE);
+        homepage_message_textbox.setFont(new Font("Tahoma", Font.BOLD, 18));
+
+        //Category 1 button
+        JButton video_games_category_button = new JButton("Video Games");
+        video_games_category_button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(video_games_category_button);
+
+        //Category 2 button
+        JButton TV_category_button = new JButton("TV");
+        TV_category_button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(TV_category_button);
+
+        //Category 3 button
+        JButton movies_category_button = new JButton("Movies");
+        movies_category_button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(movies_category_button);
+
+        //Category 4 button
+        JButton music_category_button = new JButton("Music");
+        music_category_button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(music_category_button);
+
+        //Log-out button
+        JButton logout_button = new JButton("Log out");
+        logout_button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(logout_button);
+        logout_button.setForeground(Color.RED);
+
+
+
+
+
+        profile_border.setVisible(true); //Set whole window page visibility to true
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new profile_page()); //Invoke every characteristic for the frame at once
+
+    }
+}
