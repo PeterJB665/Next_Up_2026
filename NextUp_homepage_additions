@@ -1,0 +1,97 @@
+import java.awt.*;
+import javax.swing.*;
+
+
+public class nextup_homepage {    JFrame profile_border;
+    //Set up frame
+    public nextup_homepage() {
+        profile_border = new JFrame("NextUp - Homepage");
+        profile_border.setSize(400,500);
+        profile_border.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        profile_border.setLocationRelativeTo(null);
+        //profile_border.setVisible(true); //Set frame visibility to true
+
+
+        //Set up JPanel to hold the homepage textbox and the feed area
+        JPanel textandfeedholderpanel = new JPanel(new BorderLayout());
+        textandfeedholderpanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+
+        //Set up JPanel for textboxes
+        JPanel textboxespanel = new JPanel();
+        textboxespanel.setLayout(new BoxLayout(textboxespanel, BoxLayout.Y_AXIS));
+        textboxespanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        profile_border.add(textboxespanel);
+
+        //Set up Jpanel belonging to category buttons
+        JPanel buttonspanel = new JPanel (new FlowLayout(FlowLayout.CENTER));
+
+        //Set up homepage textbox
+        JLabel homepage_message_textbox = new JLabel("<html><p> Welcome to your homepage - Select a category to view its corresponding products! <p><html>"); //HTML condenses lines to fit the window
+        textboxespanel.add(homepage_message_textbox);
+        homepage_message_textbox.setForeground(Color.BLUE);
+        homepage_message_textbox.setFont(new Font("Tahoma", Font.BOLD, 18));
+
+
+        //Add homepage message to the text and feed holder panel
+        textandfeedholderpanel.add(textboxespanel, BorderLayout.NORTH);
+
+
+        //Category 1 button
+        JButton video_games_category_button = new JButton("Video Games");
+        buttonspanel.add(video_games_category_button);
+
+        //Category 2 button
+        JButton TV_category_button = new JButton("TV");
+        buttonspanel.add(TV_category_button);
+
+        //Category 3 button
+        JButton movies_category_button = new JButton("Movies");
+        buttonspanel.add(movies_category_button);
+
+        //Category 4 button
+        JButton music_category_button = new JButton("Music");
+        buttonspanel.add(music_category_button);
+
+        //Log-out button
+        JButton logout_button = new JButton("Log out");
+        logout_button.setForeground(Color.RED);
+        logout_button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+
+        //Set up settings and logout holder panel
+        JPanel settingsandlogout_panel = new JPanel();
+        settingsandlogout_panel.setLayout(new BoxLayout(settingsandlogout_panel, BoxLayout.Y_AXIS));
+
+
+        //Set up settings button and add it to panel
+        JButton settings_button = new JButton("Settings");
+        settingsandlogout_panel.add(settings_button);
+        settings_button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        settingsandlogout_panel.add(logout_button);
+
+
+        //Set up feed panel
+        JPanel feed_panel = new JPanel();
+        feed_panel.setLayout(new BorderLayout());
+        feed_panel.setBackground(Color.LIGHT_GRAY);
+        JLabel feed_goes_here_textbox = new JLabel("Feed will go here");
+        feed_panel.add(feed_goes_here_textbox);
+        feed_goes_here_textbox.setHorizontalAlignment(JLabel.CENTER);
+        textandfeedholderpanel.add(feed_panel, BorderLayout.CENTER);
+
+
+        //Set up positions for panels
+     profile_border.add(settingsandlogout_panel, BorderLayout.NORTH);
+     profile_border.add(textandfeedholderpanel, BorderLayout.CENTER);
+     profile_border.add(buttonspanel, BorderLayout.SOUTH);
+
+        profile_border.setVisible(true); //Set whole window page visibility to true
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new nextup_homepage()); //Invoke every characteristic for the frame at once
+
+    }
+}
