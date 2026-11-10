@@ -95,7 +95,7 @@ public class Search_Page_NU {
                     if (query.equals(placeholderText) || query.trim().isEmpty()) {
                         resultsArea.setText("Please enter a valid search term.");
                     } else {
-                        // This is where you will eventually query your NextUp SQLite database
+                        // This is where TC will eventually query NextUp SQLite database
                         resultsArea.setText("Searching database for: " + query + "\n\n(Database connection needed to display real results...)");
                     }
                 }
