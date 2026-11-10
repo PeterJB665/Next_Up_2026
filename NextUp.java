@@ -102,26 +102,39 @@ public class NextUp {
                         }
                     });
                     //create a label that welcomes the user
-                    JLabel welcome_login = new JLabel("Welcome to Next Up! Please log in.");
-                    welcome_login.setForeground(Color.BLUE);
-                    welcome_login.setFont(new Font("Tahoma", Font.BOLD, 18));
-
-                    //create a button to login, it doesn't do anything yet, but it will
                     JButton login_button = new JButton("See what's up!");
                     login_button.setForeground(Color.BLUE);
                     login_button.setFont(new Font("Tahoma", Font.BOLD, 18));
 
                     //action listener to see when the button is pressed
                     login_button.addActionListener(new ActionListener() {
-                        @Override
                         public void actionPerformed(ActionEvent e) {
-                            //here, we swap to the main app
-                            //login.setVisible(false);
-                            //next_up.setVisible(true);
+                            String currentEmail = email.getText();
+                            String currentPassword = password.getText();
+                            
+                            // Prevent attempting to log in with the default placeholder text
+                            if (currentEmail.equals("Enter your Email Address...") || currentPassword.equals("Enter your password...")) {
+                                JOptionPane.showMessageDialog(login, "Please enter your email and password.");
+                                return;
+                            }
 
+                            // Call the database manager to verify the credentials
+                            boolean isAuthenticated = NextUpUsersDatabaseManager.authenticateUser(currentEmail, currentPassword);
+                            
+                            if (isAuthenticated) {
+                                JOptionPane.showMessageDialog(login, "Login successful!");
+                                // login.setVisible(false);
+                                // next_up.setVisible(true); // Uncomment this line once your main app frame is built and defined
+                            } else {
+                                JOptionPane.showMessageDialog(login, "Invalid email or password. Please try again.");
+                            }
                         }
                     });
 
+                    JLabel welcome_login = new JLabel("Welcome to Next Up! Please log in.");
+                    welcome_login.setForeground(Color.BLUE);
+                    welcome_login.setFont(new Font("Tahoma", Font.BOLD, 18));
+                    
                     //add everything to login
                     login.add(welcome_login,gbc);
                     login.add(email,gbc);
