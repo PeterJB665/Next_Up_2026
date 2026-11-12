@@ -1,2 +1,3 @@
-# Next_Up_2026
-A simple news app that shows the release dates and short summaries of new releases in different kinds of media.
+# SearchesDatabase
+TC Connors 20261111
+Task: Implement a database of search returns for the app to display for the current user.
