@@ -125,11 +125,12 @@ public class NextUp {
 
                             // Call the database manager to verify the credentials
                             boolean isAuthenticated = NextUpUsersDatabaseManager.authenticateUser(currentEmail, currentPassword);
-                            
+
+                            //Laila: Successful login brings user to homepage
                             if (isAuthenticated) {
                                 JOptionPane.showMessageDialog(login, "Login successful!");
-                                login.setVisible(false);
-                                //next_up.setVisible(true); // Uncomment this line once your main app frame is built and defined
+                                login.dispose();
+                                new NextUpHome(); // Uncomment this line once your main app frame is built and defined
                             } else {
                                 JOptionPane.showMessageDialog(login, "Invalid email or password. Please try again.");
                             }

@@ -47,6 +47,14 @@ public class NextUpHome {
         JButton logout_button = new JButton("Log out");
         logout_button.setForeground(Color.RED);
         logout_button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        logout_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                 new NextUp(); //Need to connect welcome page to here
+                profile_border.dispose();
+
+            }
+        });
 
         // Set up settings and logout holder panel
         JPanel settingsandlogout_panel = new JPanel();
@@ -61,6 +69,19 @@ public class NextUpHome {
         dropdownButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
         selectionLabel = new JLabel("Selected: None");
         selectionLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+//Add search button to homepage
+        JButton search_button = new JButton("Search");
+        search_button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        search_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Search_Page_NU(); //Act of bringing user to searchpage; Need to add the searchpage class to nextuptrue in order for this to work
+                profile_border.dispose();
+            }
+        });
+
+
 
         for (String option : options) {
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(option);
@@ -88,6 +109,7 @@ public class NextUpHome {
         });
 
         // Add elements to the top panel (Do NOT add the popupMenu directly here)
+        settingsandlogout_panel.add(search_button);
         settingsandlogout_panel.add(dropdownButton);
         settingsandlogout_panel.add(selectionLabel);
         settingsandlogout_panel.add(logout_button);
