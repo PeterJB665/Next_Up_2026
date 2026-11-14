@@ -1,0 +1,11 @@
+{
+    "java.project.sourcePaths": [
+        "Next_Up/src"
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "Next_Up/lib/bcrypt-0.10.2.jar",
+        "Next_Up/lib/bytes-1.6.1.jar",
+        "Next_Up/lib/sqlite-jdbc-3.53.4.0.jar"
+    ]
+}
