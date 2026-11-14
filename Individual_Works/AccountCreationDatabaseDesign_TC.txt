@@ -1,0 +1,10 @@
+AccountCreationDatabaseDesign_TC
+
+Downloaded and created library links for SQLite database with security encrypted passwords in lib folder
+Now actual database creation with schema
+UserID - primary key
+Email address
+Username
+password - encryption required
+
+create src folder and DatabaseManager.java
