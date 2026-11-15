@@ -125,22 +125,36 @@ public class NextUp {
 
                             // Call the database manager to verify the credentials
                             boolean isAuthenticated = NextUpUsersDatabaseManager.authenticateUser(currentEmail, currentPassword);
-                            
+
+                            //Laila: Successful login brings user to homepage
                             if (isAuthenticated) {
                                 JOptionPane.showMessageDialog(login, "Login successful!");
-                                login.setVisible(false);
-                                //next_up.setVisible(true); // Uncomment this line once your main app frame is built and defined
+                                login.dispose();
+                                new NextUpHome(); // Uncomment this line once your main app frame is built and defined
                             } else {
                                 JOptionPane.showMessageDialog(login, "Invalid email or password. Please try again.");
                             }
                         }
                     });
 
+                    JButton back_button = new JButton("Back");
+                    back_button.setForeground(Color.RED);
+                    back_button.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            login.dispose();
+                            new NextUp();//Insert welcome page class name
+                        }
+                    });
+
+
+
                     //add everything to login
                     login.add(welcome_login,gbc);
                     login.add(email,gbc);
                     login.add(password,gbc);
                     login.add(login_button,gbc);
+                    login.add(back_button,gbc);
                     login.setSize(500,500);
                     login.setLocationRelativeTo(null);
                     window_border.setVisible(false);
@@ -302,6 +316,18 @@ public class NextUp {
         }
     });
 
+                    //Add back button to bring user back to welcome page
+                    JButton back_button = new JButton("Back");
+                    back_button.setForeground(Color.RED);
+                    back_button.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            register.dispose();
+                            new NextUp();
+                        }
+                    });
+
+
                     //add everything to reg
                     register.add(welcome_register,gbc);
                     register.add(username,gbc);
@@ -309,6 +335,7 @@ public class NextUp {
                     register.add(password,gbc);
                     register.add(confirmPassword,gbc);
                     register.add(register_button,gbc);
+                    register.add(back_button,gbc);
 
                     register.setSize(500,500);
                     register.setLocationRelativeTo(null);
