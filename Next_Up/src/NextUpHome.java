@@ -50,6 +50,7 @@ public class NextUpHome {
         logout_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(logout_button, "You have been logged out successfully!");
                  new NextUp(); //Need to connect welcome page to here
                 profile_border.dispose();
 
