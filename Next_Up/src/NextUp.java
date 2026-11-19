@@ -137,6 +137,124 @@ public class NextUp {
                         }
                     });
 
+                    //Adding "Forgot password?" button
+                   JButton forgot_password_button = new JButton("Forgot password?");
+
+                    forgot_password_button.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            JDialog forgot_password_dialog = new JDialog(login, "Reset Password", true);
+                            forgot_password_dialog.setLayout(new GridBagLayout());
+                            GridBagConstraints dgbc = new GridBagConstraints();
+                            dgbc.insets = new Insets(6, 6, 6, 6);
+                            dgbc.fill = GridBagConstraints.HORIZONTAL;
+
+
+                            // Enters the user's email if it was already entered in login
+                            String prefill_email = email.getText().equals(placeholderEmail) ? "" : email.getText().trim();
+
+                            JTextField verify_email_field = new JTextField(prefill_email, 18);
+                            JTextField verify_username_field = new JTextField(18);
+                            JButton verify_button = new JButton("Click here to verify your account");
+
+
+
+                            // textfield to choose a new password will be accessible after user verifies their account
+                            JTextField new_password_field = new JTextField(18);
+                            new_password_field.setEnabled(false);
+
+                            JButton save_password_button = new JButton("Save new password");
+                            save_password_button.setEnabled(false);
+
+                            JLabel status_verifier_label = new JLabel("Enter email and username to verify account");
+                            status_verifier_label.setForeground(Color.DARK_GRAY);
+
+
+
+
+                            // Checking user database to see whether email and username match
+                            verify_button.addActionListener(ev -> {
+                                String entered_email = verify_email_field.getText().trim();
+                                String entered_username = verify_username_field.getText().trim();
+
+                                if (entered_email.isEmpty() || entered_username.isEmpty()) {
+                                    status_verifier_label.setText("Please enter your current email and username.");
+                                    status_verifier_label.setForeground(Color.RED);
+                                    return;
+                                }
+                                //Notify user if their entered email and username match database
+                                if (NextUpUsersDatabaseManager.verify_user_email_username(entered_email, entered_username)) {
+                                    status_verifier_label.setText("Account found! Create a new password.");
+                                    status_verifier_label.setForeground(new Color(0, 128, 0));
+
+
+
+                                    // Lock the user email and username fields and grant user access to new password field
+                                    verify_email_field.setEnabled(false);
+                                    verify_username_field.setEnabled(false);
+                                    verify_button.setEnabled(false);
+                                    new_password_field.setEnabled(true);
+                                    save_password_button.setEnabled(true);
+                                    forgot_password_dialog.pack();
+                                } else {
+                                    status_verifier_label.setText("Account not found. Please try again.");
+                                    status_verifier_label.setForeground(Color.RED);
+                                }
+                            });
+
+                            //User's new password gets updated in user database and gets filled into login
+                            save_password_button.addActionListener(ev -> {
+                                String verified_email = verify_email_field.getText().trim();
+                                String verified_username = verify_username_field.getText().trim();
+                                String new_password = new_password_field.getText().trim();
+
+                                if (new_password.isEmpty()) {
+                                    status_verifier_label.setText("Please enter a new password.");
+                                    status_verifier_label.setForeground(Color.RED);
+                                    return;
+                                }
+
+                                if (NextUpUsersDatabaseManager.resetPasswordWithUsername(verified_email, verified_username, new_password)) {
+                                    // Autofill user's email and password onto the login page
+                                    email.setText(verified_email);
+                                    email.setForeground(textColor);
+
+                                    password.setText(new_password);
+                                    password.setForeground(textColor);
+
+                                    JOptionPane.showMessageDialog(forgot_password_dialog, "Your new password has been updated successfully!");
+                                    forgot_password_dialog.dispose();
+                                } else {
+                                    status_verifier_label.setText("Error updating new password into the database.");
+                                    status_verifier_label.setForeground(Color.RED);
+                                }
+                            });
+
+
+
+                            // Set up pop-up window's positions
+                            dgbc.gridx = 0; dgbc.gridy = 0; forgot_password_dialog.add(new JLabel("Email Address:"), dgbc);
+                            dgbc.gridx = 1; forgot_password_dialog.add(verify_email_field, dgbc);
+
+                            dgbc.gridx = 0; dgbc.gridy = 1; forgot_password_dialog.add(new JLabel("Username:"), dgbc);
+                            dgbc.gridx = 1; forgot_password_dialog.add(verify_username_field, dgbc);
+
+                            dgbc.gridx = 0; dgbc.gridy = 2; dgbc.gridwidth = 2; forgot_password_dialog.add(verify_button, dgbc);
+
+                            dgbc.gridx = 0; dgbc.gridy = 3; dgbc.gridwidth = 1; forgot_password_dialog.add(new JLabel("New Password:"), dgbc);
+                            dgbc.gridx = 1; forgot_password_dialog.add(new_password_field, dgbc);
+
+                            dgbc.gridx = 0; dgbc.gridy = 4; dgbc.gridwidth = 2; forgot_password_dialog.add(save_password_button, dgbc);
+                            dgbc.gridx = 0; dgbc.gridy = 5; dgbc.gridwidth = 2; forgot_password_dialog.add(status_verifier_label, dgbc);
+
+
+
+                            forgot_password_dialog.pack();
+                            forgot_password_dialog.setLocationRelativeTo(login);
+                            forgot_password_dialog.setVisible(true);
+                        }
+                    });
+
                     JButton back_button = new JButton("Back");
                     back_button.setForeground(Color.RED);
                     back_button.addActionListener(new ActionListener() {
@@ -154,6 +272,7 @@ public class NextUp {
                     login.add(email,gbc);
                     login.add(password,gbc);
                     login.add(login_button,gbc);
+                    login.add(forgot_password_button, gbc);
                     login.add(back_button,gbc);
                     login.setSize(500,500);
                     login.setLocationRelativeTo(null);
