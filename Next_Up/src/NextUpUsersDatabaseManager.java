@@ -76,6 +76,53 @@ public class NextUpUsersDatabaseManager {
         }
     }
 
+    // connect to "forgot password" dialog
+    // check if email address and username both match sql User table
+    public static boolean verify_user_email_username(String email, String username) {
+        String querySQL = "SELECT 1 FROM Users WHERE EmailAddress = ? AND Username = ?";
+
+
+
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement pstmt = conn.prepareStatement(querySQL)) {
+
+            pstmt.setString(1, email);
+            pstmt.setString(2, username);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next(); // True only if both match the same account
+
+        } catch (SQLException e) {
+            System.out.println("Verification error: " + e.getMessage());
+            return false;
+        }
+    }
+
+
+
+    // Update the database with user's new password and bcrypt hashing
+    public static boolean resetPasswordWithUsername(String email, String username, String newPlainTextPassword) {
+        String updateSQL = "UPDATE Users SET Password = ? WHERE EmailAddress = ? AND Username = ?";
+
+
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement pstmt = conn.prepareStatement(updateSQL)) {
+
+            String new_HashedPassword = BCrypt.withDefaults().hashToString(12, newPlainTextPassword.toCharArray());
+
+            pstmt.setString(1, new_HashedPassword);
+            pstmt.setString(2, email);
+            pstmt.setString(3, username);
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Password reset error: " + e.getMessage());
+            return false;
+        }
+    }
+
+
     public static void main(String[] args) {
         initializeDatabase();
     }
