@@ -98,6 +98,22 @@ public class NextUpSearchFunction {
         return newEntriesCount;
     }
 
+    // Crawls all configured verticals without requiring the UI to know the category list
+    public static int refreshAllFeeds() {
+        return searchAndPopulate(new ArrayList<>(CATEGORY_FEEDS.keySet()));
+    }
+
+    // Coordinates the search: ensures DB exists, populates if empty, then queries by keyword
+    public static List<NextUpSearchReturnsDatabaseManager.SearchResult> executeSearch(String keyword) {
+        NextUpSearchReturnsDatabaseManager.initializeDatabase();
+
+        if (NextUpSearchReturnsDatabaseManager.getAllResults().isEmpty()) {
+            refreshAllFeeds();
+        }
+
+        return NextUpSearchReturnsDatabaseManager.searchByKeyword(keyword);
+    }
+
     // Connects to a single RSS/Atom feed, parses the XML, and sends records to the Database Manager
     private static int fetchAndParseFeed(String category, String feedUrl) {
         int addedCount = 0;

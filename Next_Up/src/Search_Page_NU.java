@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.List;
 public class Search_Page_NU {
     public Search_Page_NU() {
         //public static void main(String[] args) {
@@ -101,25 +102,108 @@ public class Search_Page_NU {
                 }
             }
         });
-        //6. 11132026 Add "Back" button and action listener that brings user to homepage
+
+        // 5. Add Action Listener to Search Button (Calls NextUpSearchFunction off the UI thread)
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String query = searchBar.getText();
+
+                // Basic validation to make sure they didn't just search the placeholder
+                if (query.equals(placeholderText) || query.trim().isEmpty()) {
+                    resultsArea.setText("Please enter a valid search term.");
+                    return;
+                }
+
+                // Disable button and show feedback while background thread runs
+                searchButton.setEnabled(false);
+                resultsArea.setText("Searching for \"" + query.trim() + "\"...");
+
+                new SwingWorker<List<NextUpSearchReturnsDatabaseManager.SearchResult>, Void>() {
+                    @Override
+                    protected List<NextUpSearchReturnsDatabaseManager.SearchResult> doInBackground() {
+                        return NextUpSearchFunction.executeSearch(query);
+                    }
+
+                    @Override
+                    protected void done() {
+                        try {
+                            List<NextUpSearchReturnsDatabaseManager.SearchResult> results = get();
+                            if (results.isEmpty()) {
+                                resultsArea.setText("No results found for: " + query.trim()
+                                        + "\n\nTry clicking 'Refresh Feeds' to pull the latest articles.");
+                            } else {
+                                StringBuilder sb = new StringBuilder();
+                                sb.append("Found ").append(results.size()).append(" result(s):\n\n");
+                                for (NextUpSearchReturnsDatabaseManager.SearchResult r : results) {
+                                    sb.append(r.toString()).append("\n\n");
+                                }
+                                resultsArea.setText(sb.toString());
+                                resultsArea.setCaretPosition(0); // Scroll back to top
+                            }
+                        } catch (Exception ex) {
+                            resultsArea.setText("Error retrieving search results: " + ex.getMessage());
+                        } finally {
+                            searchButton.setEnabled(true);
+                        }
+                    }
+                }.execute();
+            }
+        });
+
+        // 6. Add "Back" button and "Refresh Feeds" button
         JButton backButton = new JButton("Back");
         backButton.setForeground(Color.RED);
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new  NextUpHome();
+                new NextUpHome();
                 searchFrame.dispose();
             }
         });
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
         gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.WEST;
         searchFrame.add(backButton, gbc);
 
+        JButton refreshButton = new JButton("Refresh Feeds");
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshButton.setEnabled(false);
+                searchButton.setEnabled(false);
+                resultsArea.setText("Crawling RSS feeds and updating database... Please wait.");
 
+                new SwingWorker<Integer, Void>() {
+                    @Override
+                    protected Integer doInBackground() {
+                        return NextUpSearchFunction.refreshAllFeeds();
+                    }
 
+                    @Override
+                    protected void done() {
+                        try {
+                            int added = get();
+                            resultsArea.setText("Feed refresh complete. " + added
+                                    + " new article(s) added to the database.\nEnter a search term above to query them.");
+                        } catch (Exception ex) {
+                            resultsArea.setText("Error refreshing feeds: " + ex.getMessage());
+                        } finally {
+                            refreshButton.setEnabled(true);
+                            searchButton.setEnabled(true);
+                        }
+                    }
+                }.execute();
+            }
+        });
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.EAST;
+        searchFrame.add(refreshButton, gbc);
 
         // Set final window properties to match the rest of the NextUp project
         searchFrame.setSize(800, 500);
