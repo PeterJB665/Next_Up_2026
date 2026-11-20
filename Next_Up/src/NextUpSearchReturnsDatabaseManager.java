@@ -133,6 +133,39 @@ public class NextUpSearchReturnsDatabaseManager {
         return results;
     }
 
+    // Searches stored records where the Title or Topic contains the user's keyword (case-insensitive)
+    public static List<SearchResult> searchByKeyword(String keyword) {
+        List<SearchResult> results = new ArrayList<>();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return results;
+        }
+
+        String querySQL = "SELECT Topic, URL, Title, DatePublished FROM SearchReturns "
+                + "WHERE Title LIKE ? OR Topic LIKE ? ORDER BY ReturnID DESC";
+
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement pstmt = conn.prepareStatement(querySQL)) {
+
+            String wildcard = "%" + keyword.trim() + "%";
+            pstmt.setString(1, wildcard);
+            pstmt.setString(2, wildcard);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    results.add(new SearchResult(
+                            rs.getString("Topic"),
+                            rs.getString("URL"),
+                            rs.getString("Title"),
+                            rs.getString("DatePublished")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching by keyword: " + e.getMessage());
+        }
+        return results;
+    }
+
     public static void main(String[] args) {
         initializeDatabase();
     }
