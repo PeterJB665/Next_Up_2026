@@ -1,11 +1,19 @@
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+
 public class Search_Page_NU {
+    private String currentUserEmail;
+
     public Search_Page_NU() {
-        //public static void main(String[] args) {
-        //SwingUtilities.invokeLater(() -> {
+        this(null);
+    }
+
+    public Search_Page_NU(String userEmail) {
+        this.currentUserEmail = userEmail;
+
         // Create the main frame
         JFrame searchFrame = new JFrame("Next Up - Search sources");
         searchFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,7 +30,7 @@ public class Search_Page_NU {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2; // Spans across both the search bar and button
+        gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         searchFrame.add(titleLabel, gbc);
 
@@ -35,7 +43,6 @@ public class Search_Page_NU {
         searchBar.setText(placeholderText);
         searchBar.setForeground(placeholderColor);
 
-        // Add FocusListener for the search bar placeholder
         searchBar.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -44,6 +51,7 @@ public class Search_Page_NU {
                     searchBar.setForeground(textColor);
                 }
             }
+
             @Override
             public void focusLost(FocusEvent e) {
                 if (searchBar.getText().isEmpty()) {
@@ -71,11 +79,10 @@ public class Search_Page_NU {
 
         // 4. Create Results Display Area
         JTextArea resultsArea = new JTextArea(15, 40);
-        resultsArea.setEditable(false); // Prevents users from typing in the results box
+        resultsArea.setEditable(false);
         resultsArea.setText("search results here...");
         resultsArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
-        // Wrap the text area in a scroll pane in case there are many results
         JScrollPane scrollPane = new JScrollPane(resultsArea);
 
         gbc.gridx = 0;
@@ -83,25 +90,8 @@ public class Search_Page_NU {
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0; // Tells the layout to give extra vertical space to the results area
+        gbc.weighty = 1.0;
         searchFrame.add(scrollPane, gbc);
-
-        // 5. Add Action Listener to Button
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String query = searchBar.getText();
-
-                // Basic validation to make sure they didn't just search the placeholder
-                if (query.equals(placeholderText) || query.trim().isEmpty()) {
-                    resultsArea.setText("Please enter a valid search term.");
-                } else {
-                    // This is where you will eventually query your NextUp SQLite database
-                    // This is where TC will eventually query NextUp SQLite database
-                    resultsArea.setText("Searching database for: " + query + "\n\n(Database connection needed to display real results...)");
-                }
-            }
-        });
 
         // 5. Add Action Listener to Search Button (Calls NextUpSearchFunction off the UI thread)
         searchButton.addActionListener(new ActionListener() {
@@ -109,20 +99,35 @@ public class Search_Page_NU {
             public void actionPerformed(ActionEvent e) {
                 String query = searchBar.getText();
 
-                // Basic validation to make sure they didn't just search the placeholder
                 if (query.equals(placeholderText) || query.trim().isEmpty()) {
                     resultsArea.setText("Please enter a valid search term.");
                     return;
                 }
 
-                // Disable button and show feedback while background thread runs
                 searchButton.setEnabled(false);
                 resultsArea.setText("Searching for \"" + query.trim() + "\"...");
 
                 new SwingWorker<List<NextUpSearchReturnsDatabaseManager.SearchResult>, Void>() {
                     @Override
                     protected List<NextUpSearchReturnsDatabaseManager.SearchResult> doInBackground() {
-                        return NextUpSearchFunction.executeSearch(query);
+                        List<NextUpSearchReturnsDatabaseManager.SearchResult> rawResults =
+                                NextUpSearchFunction.executeSearch(query);
+
+                        List<String> blacklistedDomains = (currentUserEmail != null && !currentUserEmail.trim().isEmpty())
+                                ? NextUpUsersDatabaseManager.getUserBlacklistedSites(currentUserEmail)
+                                : new ArrayList<>();
+
+                        if (blacklistedDomains.isEmpty()) {
+                            return rawResults;
+                        }
+
+                        List<NextUpSearchReturnsDatabaseManager.SearchResult> filteredResults = new ArrayList<>();
+                        for (NextUpSearchReturnsDatabaseManager.SearchResult r : rawResults) {
+                            if (!isUrlBlacklisted(r.url, blacklistedDomains)) {
+                                filteredResults.add(r);
+                            }
+                        }
+                        return filteredResults;
                     }
 
                     @Override
@@ -131,7 +136,7 @@ public class Search_Page_NU {
                             List<NextUpSearchReturnsDatabaseManager.SearchResult> results = get();
                             if (results.isEmpty()) {
                                 resultsArea.setText("No results found for: " + query.trim()
-                                        + "\n\nTry clicking 'Refresh Feeds' to pull the latest articles.");
+                                        + "\n\nTry clicking 'Refresh Feeds' or adjusting your blacklisted websites in Profile.");
                             } else {
                                 StringBuilder sb = new StringBuilder();
                                 sb.append("Found ").append(results.size()).append(" result(s):\n\n");
@@ -139,7 +144,7 @@ public class Search_Page_NU {
                                     sb.append(r.toString()).append("\n\n");
                                 }
                                 resultsArea.setText(sb.toString());
-                                resultsArea.setCaretPosition(0); // Scroll back to top
+                                resultsArea.setCaretPosition(0);
                             }
                         } catch (Exception ex) {
                             resultsArea.setText("Error retrieving search results: " + ex.getMessage());
@@ -157,7 +162,7 @@ public class Search_Page_NU {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new NextUpHome();
+                new NextUpHome(currentUserEmail);
                 searchFrame.dispose();
             }
         });
@@ -205,13 +210,25 @@ public class Search_Page_NU {
         gbc.anchor = GridBagConstraints.EAST;
         searchFrame.add(refreshButton, gbc);
 
-        // Set final window properties to match the rest of the NextUp project
         searchFrame.setSize(800, 500);
         searchFrame.setLocationRelativeTo(null);
         searchFrame.setVisible(true);
     }
+
+    private static boolean isUrlBlacklisted(String url, List<String> blacklistedDomains) {
+        if (url == null) {
+            return false;
+        }
+        String lowerUrl = url.toLowerCase();
+        for (String domain : blacklistedDomains) {
+            if (lowerUrl.contains(domain.toLowerCase().trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Search_Page_NU());
-
     }
 }

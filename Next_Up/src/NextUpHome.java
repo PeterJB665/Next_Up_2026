@@ -1,22 +1,27 @@
 import java.awt.*;
-import javax.swing.*;
 import java.awt.event.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.lang.*;
+import javax.swing.*;
 
 public class NextUpHome {
     JFrame profile_border;
-    private JButton dropdownButton;
-    private JPopupMenu popupMenu;
-    private List<JCheckBoxMenuItem> checkBoxes;
-    private JLabel selectionLabel;
-    private JPanel buttonspanel; // Made buttonspanel a class-level field
+    private JPanel buttonspanel;
+    private List<String> selectedCategories = new ArrayList<>();
+    private String currentUserEmail;
 
-    // Set up frame
     public NextUpHome() {
+        this(null);
+    }
+
+    public NextUpHome(String userEmail) {
+        this.currentUserEmail = userEmail;
+
         profile_border = new JFrame("NextUp - Homepage");
-        profile_border.setSize(400, 500);
+        profile_border.setSize(800, 800);
         profile_border.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         profile_border.setLocationRelativeTo(null);
 
@@ -30,7 +35,7 @@ public class NextUpHome {
         textboxespanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Set up JPanel belonging to category buttons
-        buttonspanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Initialized field
+        buttonspanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         // Set up homepage textbox
         JLabel homepage_message_textbox = new JLabel("<html><p> Welcome to your homepage - Select a category to view its corresponding products! <p><html>");
@@ -41,79 +46,57 @@ public class NextUpHome {
         // Add homepage message to the text and feed holder panel
         textandfeedholderpanel.add(textboxespanel, BorderLayout.NORTH);
 
-        // (Static category buttons removed; they will now be populated dynamically)
-
         // Log-out button
         JButton logout_button = new JButton("Log out");
         logout_button.setForeground(Color.RED);
-        logout_button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        logout_button.setAlignmentX(Component.LEFT_ALIGNMENT);
         logout_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(logout_button, "You have been logged out successfully!");
-                 new NextUp(); //Need to connect welcome page to here
+                new NextUp();
                 profile_border.dispose();
-
             }
         });
 
-        // Set up settings and logout holder panel
+        // Set up settings and logout holder panel (Left side of header)
         JPanel settingsandlogout_panel = new JPanel();
         settingsandlogout_panel.setLayout(new BoxLayout(settingsandlogout_panel, BoxLayout.Y_AXIS));
 
-        // String for all the options in the dropdown menu.
-        String[] options = {"Video Games", "TV", "Movies", "Music"};
-        checkBoxes = new ArrayList<>();
-        popupMenu = new JPopupMenu();
-
-        dropdownButton = new JButton("Categories ▾");
-        dropdownButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        selectionLabel = new JLabel("Selected: None");
-        selectionLabel.setAlignmentX(Component.RIGHT_ALIGNMENT);
-
-//Add search button to homepage
+        // Add search button to homepage
         JButton search_button = new JButton("Search");
-        search_button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        search_button.setAlignmentX(Component.LEFT_ALIGNMENT);
         search_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Search_Page_NU(); //Act of bringing user to searchpage; Need to add the searchpage class to nextuptrue in order for this to work
+                new Search_Page_NU(currentUserEmail);
                 profile_border.dispose();
             }
         });
 
+        // Add elements to the left side of the top panel
+        settingsandlogout_panel.add(search_button);
+        settingsandlogout_panel.add(logout_button);
 
-
-        for (String option : options) {
-            JCheckBoxMenuItem item = new JCheckBoxMenuItem(option);
-
-            // Prevent the popup from instantly closing on click
-            item.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    updateSelectionLabel();
-                    // STAY OPEN!!
-                    popupMenu.setVisible(true);
-                }
-            });
-
-            checkBoxes.add(item);
-            popupMenu.add(item);
-        }
-
-        // Action listener to actually show the popup menu under the button
-        dropdownButton.addActionListener(new ActionListener() {
+        // Profile Button in Top-Right Corner
+        JButton profile_button = new JButton("Profile");
+        profile_button.setForeground(Color.BLUE);
+        profile_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                popupMenu.show(dropdownButton, 0, dropdownButton.getHeight());
+                profile_border.setVisible(false);
+                new NextUp_Profile_Page(NextUpHome.this);
             }
         });
 
-        // Add elements to the top panel (Do NOT add the popupMenu directly here)
-        settingsandlogout_panel.add(search_button);
-        settingsandlogout_panel.add(dropdownButton);
-        settingsandlogout_panel.add(selectionLabel);
-        settingsandlogout_panel.add(logout_button);
+        JPanel topRightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        topRightPanel.add(profile_button);
+
+        // Combine left controls and top-right Profile button into a single header panel
+        JPanel topHeaderPanel = new JPanel(new BorderLayout());
+        topHeaderPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        topHeaderPanel.add(settingsandlogout_panel, BorderLayout.WEST);
+        topHeaderPanel.add(topRightPanel, BorderLayout.EAST);
 
         // Set up feed panel
         JPanel feed_panel = new JPanel();
@@ -125,36 +108,48 @@ public class NextUpHome {
         textandfeedholderpanel.add(feed_panel, BorderLayout.CENTER);
 
         // Set up positions for panels on the frame
-        profile_border.add(settingsandlogout_panel, BorderLayout.NORTH);
+        profile_border.add(topHeaderPanel, BorderLayout.NORTH);
         profile_border.add(textandfeedholderpanel, BorderLayout.CENTER);
         profile_border.add(buttonspanel, BorderLayout.SOUTH);
 
-        profile_border.setVisible(true); // Set whole window page visibility to true
+        // Load saved categories for the logged-in user
+        if (currentUserEmail != null && !currentUserEmail.trim().isEmpty()) {
+            List<String> saved = NextUpUsersDatabaseManager.getUserSelectedCategories(currentUserEmail);
+            renderCategoryButtons(saved);
+        }
+
+        profile_border.setVisible(true);
     }
 
-    // Updated method to manage both the text label and bottom panel components dynamically
-    private void updateSelectionLabel() {
-        List<String> selectedItems = new ArrayList<>();
-        for (JCheckBoxMenuItem cb : checkBoxes) {
-            if (cb.isSelected()) {
-                selectedItems.add(cb.getText());
-            }
-        }
+    public String getCurrentUserEmail() {
+        return currentUserEmail;
+    }
 
-        if (selectedItems.isEmpty()) {
-            selectionLabel.setText("Selected: None");
-        } else {
-            selectionLabel.setText("Selected: " + String.join(", ", selectedItems));
-        }
+    // Returns a copy of currently selected categories so the Profile page can sync checkboxes
+    public List<String> getSelectedCategories() {
+        return new ArrayList<>(selectedCategories);
+    }
 
-        // Clear out the bottom panel and add buttons for each selected option
+    // Updates bottom category buttons and persists selections to the current user's account
+    public void updateSelectedCategories(List<String> newSelections) {
+        renderCategoryButtons(newSelections);
+
+        if (currentUserEmail != null && !currentUserEmail.trim().isEmpty()) {
+            NextUpUsersDatabaseManager.saveUserSelectedCategories(currentUserEmail, this.selectedCategories);
+        }
+    }
+
+    private void renderCategoryButtons(List<String> selections) {
+        this.selectedCategories = (selections != null)
+                ? new ArrayList<>(selections)
+                : new ArrayList<>();
+
         buttonspanel.removeAll();
-        for (String item : selectedItems) {
+        for (String item : this.selectedCategories) {
             JButton categoryButton = new JButton(item);
             buttonspanel.add(categoryButton);
         }
 
-        // Refresh the panel layout so Swing redraws the newly added buttons
         buttonspanel.revalidate();
         buttonspanel.repaint();
     }

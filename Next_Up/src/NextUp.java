@@ -130,7 +130,7 @@ public class NextUp {
                             if (isAuthenticated) {
                                 JOptionPane.showMessageDialog(login, "Login successful!");
                                 login.dispose();
-                                new NextUpHome(); // Uncomment this line once your main app frame is built and defined
+                                new NextUpHome(currentEmail); // Uncomment this line once your main app frame is built and defined
                             } else {
                                 JOptionPane.showMessageDialog(login, "Invalid email or password. Please try again.");
                             }
